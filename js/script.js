@@ -1,21 +1,30 @@
-$(document).ready(function() {
-    let employeeData = [
-        { id: 1, name: "rishtarash", price: "25$", imgUrl: "./img/3.jpg" },
-        { id: 2, name: "loptop", price: "40$", imgUrl: "./img/1.jpg" },
-        { id: 3, name: "saat", price: "15$", imgUrl: "./img/2.jpg" }
-    ]
-    let tmpl = `
+const PRODUCTS_URL = "https://api.imgflip.com/get_memes";
 
-      <li id="\${id}" class="wrap-item"><img src="\${imgUrl}"></img> <span>\${name}</span> <span>\${price}</span>
-      <a class= "modal-btn" data-id="\${id}" href="#modal-\${id}" rel="modal:open">more info</a>
-      </li>
+async function getMemes() {
+	try {
+		const res = await fetch(`${PRODUCTS_URL}`);
+		const data = await res.json();
+		return data;
+	} catch (e) {
+		console.warn(e);
+	}
+}
 
-      <div id="modal-\${id}" class="modal">
-        <p>\${name} \${price}</p>
-        <a  href="#" rel="modal:close">Close</a>
-    </div>
+async function fillProducts() {
+	const productsWrapper = document.getElementById("products-wrapper");
+	const data = await getMemes();
+	console.log(data);
+	const memes = data.data.memes;
+	console.log(memes);
+	memes.forEach((meme) => {
+		const productContainer = document.createElement("div");
+		productContainer.classList.add("product");
+		productContainer.innerHTML = `<div style="width:${meme.width}px; height:${meme.height}px">
+            <img src="${meme.url}"/>
+            </div>
+        <p>${meme.name}</p>`;
+		productsWrapper.append(productContainer);
+	});
+}
 
-    `;
-
-    $.tmpl(tmpl, employeeData).appendTo(".wrapper")
-});
+fillProducts();
