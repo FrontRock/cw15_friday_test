@@ -26,5 +26,3 @@ async function fillProducts() {
 		productsWrapper.append(productContainer);
 	});
 }
-
-fillProducts();
